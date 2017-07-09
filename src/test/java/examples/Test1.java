@@ -1,6 +1,7 @@
 package examples;
 
 
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -55,7 +56,7 @@ public class Test1 extends AbstractTestNGSpringContextTests {
          Future<String> helloMessage =  demo2.asyncHello("qinfuji");
          System.out.println(helloMessage);
         try {
-           String helloMessageV =  FutureWait.waitReturt(helloMessage);
+           String helloMessageV =  FutureWait.waitFuture(helloMessage);
            System.out.println(helloMessageV);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -68,8 +69,21 @@ public class Test1 extends AbstractTestNGSpringContextTests {
         io.vertx.core.Future<String> helloMessage =  demo2.vertxAsyncHello("qinfuji");
         System.out.println(helloMessage);
         try {
-            String helloMessageV =  FutureWait.waitReturt(helloMessage);
+            String helloMessageV =  FutureWait.waitFuture(helloMessage);
             System.out.println("vertxAsyncHello :" +helloMessageV);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    @Test(timeOut=500)
+    public void  asyncCallback(){
+        demo2.setVertx(Vertx.vertx());
+        FutureWait.SyncResultHander handler = new FutureWait.SyncResultHander<String , AsyncResult<String>>();
+        demo2.asyncCallback("qinfuji" ,handler);
+        try {
+            String helloMessage =  (String)handler.get();
+            System.out.println("asyncCallback : "+helloMessage);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

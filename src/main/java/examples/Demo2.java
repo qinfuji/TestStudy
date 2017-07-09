@@ -62,4 +62,18 @@ public class Demo2 {
         });
         return ret;
     }
+
+    public void asyncCallback(String name , Handler<AsyncResult<String>> handler){
+        io.vertx.core.Future<String>  ret = io.vertx.core.Future.future();
+        this.vertx.executeBlocking((future)->{
+            future.complete("hello "+name);
+        },(result)->{
+            if(result.succeeded()){
+                ret.complete((String)result.result());
+                handler.handle(io.vertx.core.Future.succeededFuture((String)result.result()));
+            }else{
+                handler.handle(io.vertx.core.Future.failedFuture(result.cause()));
+            }
+        });
+    }
 }
